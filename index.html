@@ -3,265 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifeLine BD | প্রিমিয়াম রক্তদান প্ল্যাটফর্ম</title>
+    <title>LifeLine BD | রক্তদান প্ল্যাটফর্ম</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; }
         body { font-family: 'Noto Sans Bengali', sans-serif; background: #fdfcfc; scroll-behavior: smooth; }
         .hero-gradient { background: radial-gradient(circle at top right, #ff4d4d, #881337); }
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .donor-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(225, 29, 72, 0.1); position: relative; }
+        .donor-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(225, 29, 72, 0.15); }
         
-        /* ডোনার কার্ড ডিজাইন */
-        .donor-card { 
-            background: #ffffff;
-            border-radius: 2.5rem;
-            padding: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-            border: 1px solid #ef4444;
-            cursor: pointer;
-        }
-        .donor-card:hover { transform: translateY(-5px); }
+        .card-highlight { border: 2px solid #e11d48 !important; animation: pulse-border 2s infinite; }
+        @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(225, 29, 72, 0); } 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); } }
+
+        .input-focus { transition: all 0.3s ease; border: 1px solid transparent; }
+        .input-focus:focus { border-color: #e11d48; background: white; box-shadow: 0 0 15px rgba(225, 29, 72, 0.08); }
         
-        .donor-card:active .donor-name, 
-        .donor-card:hover .donor-name { 
-            color: #ef4444; 
-        }
-
-        .card-drop-bg {
-            position: absolute;
-            right: -15px;
-            bottom: -20px;
-            width: 150px;
-            height: 180px;
-            background: rgba(0, 0, 0, 0.04);
-            clip-path: path('M75 0C75 0 0 80 0 120C0 160 33.5 180 75 180C116.5 180 150 160 150 120C150 80 75 0 75 0Z');
-            z-index: 0;
-            transform: rotate(-5deg);
-        }
-
-        .blood-group-badge {
-            background: #cc3333;
-            width: 60px;
-            height: 60px;
-            border-radius: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 900;
-            box-shadow: 0 8px 15px rgba(204, 51, 51, 0.2);
-        }
-
-        .call-btn {
-            background: #0f172a;
-            color: white;
-            padding: 1rem 0;
-            border-radius: 1.2rem;
-            font-weight: bold;
-            flex: 1.2;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .whatsapp-btn {
-            background: #f0fdf4;
-            color: #22c55e;
-            width: 85px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 1.2rem;
-            border: 1px solid #dcfce7;
-            transition: all 0.2s ease;
-        }
-        .whatsapp-btn:active {
-            background: #22c55e !important;
-            color: white !important;
-        }
-
-        .fav-icon { cursor: pointer; transition: all 0.3s ease; }
-        .fav-icon.active { color: #e11d48 !important; }
+        .bookmark-btn { transition: all 0.3s ease; cursor: pointer; border: none; background: none; margin: 0; padding: 0; line-height: 1; }
+        .bookmark-btn i { font-size: 1.4rem; color: #d1d5db; transition: all 0.3s ease; }
+        .bookmark-btn:hover i { transform: scale(1.2); }
+        .is-saved { color: #e11d48 !important; filter: drop-shadow(0 0 5px rgba(225, 29, 72, 0.4)); }
         
-        #auth-card { 
-            display: none; 
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        #auth-card.show-card { 
-            display: block; 
-            opacity: 1;
-            transform: translateY(0);
-            margin-bottom: 3rem;
-        }
-        .hidden-section { display: none !important; }
-        
-        .search-box-custom {
-            border: 4px solid #ef4444 !important;
-        }
+        .card-share-btn { color: #cbd5e1; transition: all 0.3s ease; cursor: pointer; border: none; background: none; margin: 0; padding: 0; line-height: 1; text-align: center; width: 1.4rem;}
+        .card-share-btn:hover { color: #e11d48; transform: scale(1.2); }
+        .card-share-btn i { font-size: 1.1rem; }
 
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #e11d48; border-radius: 10px; }
+        .hidden-section { display: none !important; }
+        
+        #auth-card { transition: all 0.5s ease; opacity: 0; transform: scale(0.95); pointer-events: none; height: 0; margin-bottom: 0; overflow: hidden; }
+        #auth-card.show-card { opacity: 1; transform: scale(1); pointer-events: auto; height: auto; margin-bottom: 3rem; }
+        #auth-card > div { border-radius: inherit; background: white; }
 
-        /* একসারির স্টাইল */
-        .info-bar {
-            background: #fff;
-            border-bottom: 1px solid #fee2e2;
-            padding: 10px 0;
-        }
-        .info-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #fef2f2;
-            padding: 4px 14px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 800;
-            color: #374151;
-            border: 1px solid #fee2e2;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+        .info-bar { background: #fff; border-bottom: 1px solid #f1f1f1; }
+        .info-pill { font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
+        .info-dot { width: 4px; height: 4px; background: #cbd5e1; border-radius: 50%; }
+
+        .reg-share-btn { position: absolute; right: 25px; top: 25px; color: #cbd5e1; cursor: pointer; transition: all 0.3s ease; z-index: 40; border:none; background:none; }
+        .reg-share-btn:hover { color: #e11d48; transform: scale(1.2); }
+
+        #shareToast { visibility: hidden; min-width: 280px; background-color: #111827; color: #fff; text-align: center; border-radius: 15px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        #shareToast.show { visibility: visible; animation: fadeInUp 0.5s, fadeOutDown 0.5s 2.5s; }
+        @keyframes fadeInUp { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeOutDown { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body class="text-gray-900">
 
+    <div id="shareToast"></div>
+
     <nav class="glass sticky top-0 z-50 border-b border-gray-100">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2 group cursor-pointer">
+            <div class="flex items-center space-x-2 group cursor-pointer" onclick="window.location.href='/'">
                 <i class="fas fa-droplet text-red-600 text-xl group-hover:scale-110 transition-transform"></i>
-                <span class="text-xl font-black tracking-tight text-gray-800">LifeLine<span class="text-red-600"> BD</span></span>
+                <span class="text-xl font-black tracking-tight"><span class="text-red-600">Life</span><span class="text-gray-900">Line</span> <span class="text-red-600">BD</span></span>
             </div>
             <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-500 uppercase tracking-wide">
                 <a href="#" class="hover:text-red-600 transition">হোম</a>
                 <a href="#donors" class="hover:text-red-600 transition">খুঁজুন</a>
                 <a href="#stats" class="hover:text-red-600 transition">তথ্য</a>
             </div>
-            <button id="navAuthBtn" onclick="toggleAuthVisibility()" class="bg-red-50 text-red-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-md">
-                <i class="fas fa-user-circle text-xl"></i>
-            </button>
+            <button id="navAuthBtn" onclick="toggleAuthVisibility()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-2.5 rounded-full font-bold shadow-lg shadow-red-200 transition-all active:scale-95">লগইন</button>
         </div>
     </nav>
 
-    <div class="info-bar">
-        <div class="container mx-auto px-4 flex flex-wrap justify-center gap-3">
-            <div class="info-pill">
-                <i class="fas fa-clock text-red-600"></i> 
-                <span id="currentTime">--:-- --</span>
-            </div>
-            <div class="info-pill">
-                <i class="fas fa-calendar-check text-red-600"></i> 
-                <span id="fullDate">-- --- --</span>
-            </div>
-            <div class="info-pill">
-                <i class="fas fa-temperature-high text-orange-500"></i> 
-                <span>২৯°সে.</span>
+    <div class="info-bar py-2">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-center gap-4">
+                <div class="info-pill"><i class="far fa-clock text-red-500"></i> <span id="currentTime">--:--:--</span></div>
+                <div class="info-dot"></div>
+                <div class="info-pill"><i class="far fa-calendar-alt text-red-500"></i> <span id="currentDate">--/--/----</span></div>
+                <div class="info-dot"></div>
+                <div class="info-pill"><i class="fas fa-temperature-low text-blue-500"></i> <span id="currentTemp">লোড হচ্ছে..</span></div>
             </div>
         </div>
     </div>
 
     <header class="hero-gradient text-white py-28 px-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <i class="fas fa-heart-pulse text-[20rem] absolute -bottom-20 -left-20"></i>
+        </div>
         <div class="container mx-auto text-center relative z-10">
             <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-6 inline-block backdrop-blur-sm">এক ব্যাগ রক্ত, একটি নতুন জীবন</span>
             <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-[1.1]">আপনার রক্তে বেঁচে উঠুক <br><span class="text-yellow-400">হাসিমাখা একটি জীবন</span></h1>
-            <p class="text-xl mb-12 opacity-90 max-w-2xl mx-auto font-light">জরুরি প্রয়োজনে দ্রুত রক্তদাতা খুঁজে পেতে আমাদের নেটওয়ার্কে যুক্ত হোন।</p>
+            <p class="text-xl mb-12 opacity-90 max-w-2xl mx-auto font-light leading-relaxed">জরুরি প্রয়োজনে দ্রুত রক্তদাতা খুঁজে পেতে আমাদের নেটওয়ার্কে যুক্ত হোন।</p>
         </div>
     </header>
 
     <section id="stats" class="container mx-auto px-6 -mt-16 mb-24 relative z-20">
         <div class="max-w-5xl mx-auto glass p-6 rounded-[2.5rem] shadow-xl border border-white grid grid-cols-3 items-center">
-            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 border-r border-gray-100 last:border-0 text-center">
-                <div class="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center"><i class="fas fa-users"></i></div>
-                <div><h3 id="statDonors" class="text-lg md:text-2xl font-black text-gray-800 leading-tight">0</h3><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">ডোনার</p></div>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 border-r border-gray-100 last:border-0">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-lg md:text-xl">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 id="statDonors" class="text-lg md:text-2xl font-black text-gray-800 leading-tight">0</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">ডোনার</p>
+                </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 border-r border-gray-100 last:border-0 text-center">
-                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><i class="fas fa-map-marker-alt"></i></div>
-                <div><h3 id="statDistricts" class="text-lg md:text-2xl font-black text-gray-800 leading-tight">0</h3><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">জেলা</p></div>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 border-r border-gray-100 last:border-0">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg md:text-xl">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 id="statDistricts" class="text-lg md:text-2xl font-black text-gray-800 leading-tight">0</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">জেলা</p>
+                </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 last:border-0 text-center">
-                <div class="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center"><i class="fas fa-bolt"></i></div>
-                <div><h3 class="text-lg md:text-2xl font-black text-gray-800 leading-tight">24/7</h3><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">সাপোর্ট</p></div>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-3 py-2 last:border-0">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-lg md:text-xl">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg md:text-2xl font-black text-gray-800 leading-tight">24/7</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">সাপোর্ট</p>
+                </div>
             </div>
         </div>
     </section>
 
     <main class="container mx-auto px-6 grid lg:grid-cols-12 gap-12 pb-24">
+        
         <aside id="auth-card" class="lg:col-span-4 scroll-mt-28">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl border border-red-50">
+            <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl sticky top-28 border border-red-50 group transition-all duration-500 hover:border-red-200 overflow-hidden relative">
+                
                 <div id="loginSection">
-                    <h2 class="text-xl font-bold mb-6 text-gray-800">লগইন করুন</h2>
-                    <form id="loginForm" class="space-y-4">
-                        <input type="tel" id="loginPhone" required class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="মোবাইল নম্বর">
-                        <input type="password" id="loginPass" required class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="পাসওয়ার্ড">
-                        <button type="submit" class="w-full py-4 bg-gray-950 text-white rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all">লগইন করুন</button>
+                    <div class="flex items-center gap-4 mb-8 relative z-10">
+                        <div class="w-12 h-12 bg-gray-900 text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 group-hover:rotate-0 transition-all">
+                            <i class="fas fa-right-to-bracket text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800 leading-tight">লগইন করুন</h2>
+                            <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider">LifeLine BD-তে ফিরুন</p>
+                        </div>
+                    </div>
+                    
+                    <form id="loginForm" class="space-y-4 relative z-10">
+                        <div class="relative">
+                            <i class="fas fa-phone-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            <input type="tel" id="loginPhone" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="মোবাইল নম্বর">
+                        </div>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            <input type="password" id="loginPass" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="পাসওয়ার্ড">
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-4 bg-gray-950 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-red-200 transition-all flex items-center justify-center gap-2 active:scale-95 group">
+                                লগইন করুন 
+                                <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </div>
                     </form>
-                    <p class="text-center mt-6 text-xs text-gray-500">অ্যাকাউন্ট নেই? <a href="javascript:void(0)" onclick="toggleAuth('register')" class="text-red-600 font-bold">রেজিস্ট্রেশন করুন</a></p>
+                    <p class="text-center mt-6 text-xs text-gray-500">অ্যাকাউন্ট নেই? <a href="javascript:void(0)" onclick="toggleAuth('register')" class="text-red-600 font-bold hover:underline">রেজিস্ট্রেশন করুন</a></p>
                 </div>
 
                 <div id="registerSection" class="hidden-section">
-                    <h2 class="text-xl font-bold mb-6 text-gray-800">নিবন্ধন করুন</h2>
-                    <form id="proForm" class="space-y-4">
-                        <input type="text" id="userName" required class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="পূর্ণ নাম">
-                        <div class="grid grid-cols-12 gap-3">
-                            <select id="userGroup" required class="col-span-4 px-2 py-3 bg-gray-50 border rounded-xl outline-none text-sm text-gray-500">
-                                <option value="" disabled selected>গ্রুপ</option>
-                                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-                                <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-                            </select>
-                            <input type="text" id="userLoc" required class="col-span-8 px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="ঠিকানা">
+                    <button onclick="copyModernLink('Registration')" class="reg-share-btn" title="রেজিস্ট্রেশন লিংক কপি করুন">
+                        <i class="fas fa-share-nodes text-lg"></i>
+                    </button>
+
+                    <div class="flex items-center gap-4 mb-8 relative z-10">
+                        <div class="w-12 h-12 bg-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 group-hover:rotate-0 transition-all">
+                            <i class="fas fa-heart-circle-plus text-xl"></i>
                         </div>
-                        <input type="tel" id="userPhone" required class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="মোবাইল নম্বর">
-                        <input type="password" id="userPass" required class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm" placeholder="পাসওয়ার্ড">
-                        <button type="submit" class="w-full py-4 bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all">নিবন্ধন করুন</button>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800 leading-tight">ডোনার কার্ড</h2>
+                            <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider">জীবন বাঁচাতে যোগ দিন</p>
+                        </div>
+                    </div>
+                    
+                    <form id="proForm" class="space-y-4 relative z-10">
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            <input type="text" id="userName" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="আপনার পূর্ণ নাম">
+                        </div>
+                        
+                        <div class="grid grid-cols-12 gap-3">
+                            <div class="col-span-4 relative">
+                                <i class="fas fa-tint absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                                <select id="userGroup" required class="w-full pl-9 pr-2 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm text-gray-500 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>গ্রুপ</option>
+                                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                                    <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+                                </select>
+                            </div>
+                            <div class="col-span-8 relative">
+                                <i class="fas fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                                <input type="text" id="userLoc" required class="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="সম্পূর্ণ ঠিকানা লিখুন">
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <i class="fas fa-phone-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            <input type="tel" id="userPhone" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="মোবাইল নম্বর">
+                        </div>
+
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            <input type="password" id="userPass" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm transition-all" placeholder="পাসওয়ার্ড সেট করুন">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-4 bg-gray-950 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-red-200 transition-all flex items-center justify-center gap-2 active:scale-95 group">
+                                নিবন্ধন করুন 
+                                <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </div>
                     </form>
-                    <p class="text-center mt-6 text-xs text-gray-500">অ্যাকাউন্ট আছে? <a href="javascript:void(0)" onclick="toggleAuth('login')" class="text-red-600 font-bold">লগইন করুন</a></p>
+                    <p class="text-center mt-6 text-xs text-gray-500">ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="javascript:void(0)" onclick="toggleAuth('login')" class="text-red-600 font-bold hover:underline">লগইন করুন</a></p>
                 </div>
 
                 <div id="profileSection" class="hidden-section">
-                    <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-xl font-bold text-gray-800">প্রোফাইল</h2>
-                        <button onclick="saveProfile()" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-600"><i class="fas fa-save"></i></button>
+                    <div class="flex items-center justify-between mb-8 relative z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-user-check text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800 leading-tight">আপনার প্রোফাইল</h2>
+                                <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider">LifeLine BD মেম্বার</p>
+                            </div>
+                        </div>
+                        <button onclick="saveProfile()" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-all">
+                            <i class="fas fa-save"></i>
+                        </button>
                     </div>
-                    <div class="space-y-4">
-                        <input type="text" id="editName" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm font-semibold">
-                        <select id="editGroup" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm font-semibold">
-                            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-                            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-                        </select>
-                        <input type="text" id="editLoc" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm font-semibold">
-                        <button onclick="logout()" class="w-full py-3 border border-red-100 text-red-500 rounded-xl font-bold text-xs hover:bg-red-50">লগ আউট</button>
+                    
+                    <div class="space-y-4 relative z-10">
+                        <div class="relative">
+                            <label class="text-[10px] font-bold text-gray-400 ml-2 mb-1 block">নাম</label>
+                            <input type="text" id="editName" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm font-semibold">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 ml-2 mb-1 block">রক্তের গ্রুপ</label>
+                                <select id="editGroup" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm font-semibold">
+                                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                                    <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 ml-2 mb-1 block">মোবাইল</label>
+                                <input type="text" id="editPhone" readonly class="w-full px-4 py-3 bg-gray-100 border border-gray-100 rounded-xl outline-none text-sm font-semibold text-gray-500 cursor-not-allowed">
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label class="text-[10px] font-bold text-gray-400 ml-2 mb-1 block">সম্পূর্ণ ঠিকানা লিখুন</label>
+                            <input type="text" id="editLoc" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 input-focus rounded-xl outline-none text-sm font-semibold">
+                        </div>
+                        
+                        <div class="pt-4 space-y-3">
+                            <button onclick="logout()" class="w-full py-3 border border-gray-200 text-gray-500 rounded-xl font-bold text-xs hover:bg-gray-50 transition-all">লগ আউট</button>
+                            <button onclick="deleteAccount()" class="w-full py-3 bg-red-50 text-red-600 border border-red-100 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-trash-can text-[10px]"></i> অ্যাকাউন্ট মুছে ফেলুন
+                            </button>
+                        </div>
                     </div>
+                </div>
+
+                <div class="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-400 font-medium bg-gray-50 py-2 rounded-lg">
+                    <i class="fas fa-shield-halved text-green-500"></i>
+                    LifeLine BD | ১০০% সুরক্ষিত ডাটা
                 </div>
             </div>
         </aside>
 
         <section id="donors" class="lg:col-span-8">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl mb-10 search-box-custom"> 
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl mb-10 border border-red-50">
                 <h2 class="text-3xl font-black text-gray-800 mb-6">রক্তদাতা অনুসন্ধান</h2>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1 relative">
                         <i class="fas fa-map-marker-alt absolute left-5 top-1/2 -translate-y-1/2 text-red-400"></i>
-                        <input type="text" id="locSearch" onkeyup="filterDonors()" class="w-full pl-14 pr-6 py-4 bg-red-50/50 rounded-2xl outline-none border border-red-100" placeholder="ঠিকানা বা এলাকা লিখুন...">
+                        <input type="text" id="locSearch" onkeyup="filterDonors()" class="w-full pl-14 pr-6 py-4 bg-red-50/50 rounded-2xl outline-none border border-red-100 transition-all" placeholder="ঠিকানা বা জেলা লিখুন...">
                     </div>
                     <div class="w-full md:w-48 relative">
-                        <select id="groupFilter" onchange="filterDonors()" class="w-full pl-6 pr-10 py-4 bg-red-50/50 rounded-2xl outline-none border border-red-100 appearance-none cursor-pointer">
-                            <option value="">🩸 সকল গ্রুপ</option>
+                        <i class="fas fa-filter absolute left-5 top-1/2 -translate-y-1/2 text-red-400"></i>
+                        <select id="groupFilter" onchange="filterDonors()" class="w-full pl-14 pr-10 py-4 bg-red-50/50 rounded-2xl outline-none border border-red-100 transition-all text-gray-600 appearance-none cursor-pointer">
+                            <option value="">সকল গ্রুপ</option>
                             <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
                             <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
                         </select>
+                        <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                     </div>
                 </div>
             </div>
+
             <div id="donorContainer" class="grid sm:grid-cols-2 gap-8"></div>
-            <div id="noResult" class="hidden text-center py-32 bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100"><p class="text-gray-400 text-xl font-medium">তথ্য পাওয়া যায়নি!</p></div>
+            
+            <div id="noResult" class="hidden text-center py-32 bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100">
+                <div class="floating inline-block mb-6">
+                    <i class="fas fa-search-minus text-7xl text-gray-200"></i>
+                </div>
+                <p class="text-gray-400 text-xl font-medium">LifeLine BD-তে কোনো তথ্য পাওয়া যায়নি!</p>
+            </div>
         </section>
+
     </main>
+
+    <footer class="bg-white border-t border-gray-100 py-3 px-6">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-x-1.5">
+                <i class="fas fa-droplet text-red-600 text-xs"></i>
+                <span class="font-bold text-xs tracking-tight"><span class="text-red-600">Life</span><span class="text-gray-800">Line</span> BD</span>
+            </div>
+            <p class="text-gray-400 text-[9px] font-medium tracking-wide">© 2026 LifeLine BD | মানবতার সেবায় আমরা সচেষ্ট</p>
+            <div class="flex items-center gap-2 text-gray-400 text-[10px] font-bold">
+                <i class="fas fa-envelope text-red-500"></i>
+                <a href="mailto:lifelinebd.team@gmail.com" class="hover:text-red-600 transition">lifelinebd.team@gmail.com</a>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -280,8 +339,34 @@
         const db = firebase.database();
 
         let donorData = [];
-        let favorites = JSON.parse(localStorage.getItem('favDonors')) || [];
-        let loggedInUser = JSON.parse(sessionStorage.getItem('lifeLineBDUser')) || null;
+        let savedDonors = JSON.parse(localStorage.getItem('savedLifeLineDonors')) || [];
+        let loggedInUser = JSON.parse(sessionStorage.getItem('lifeLineUser')) || null;
+
+        const donorContainer = document.getElementById('donorContainer');
+        const noResult = document.getElementById('noResult');
+
+        // তাপমাত্রা ফেচ করার ফাংশন (উন্নত লজিক)
+        function getRealWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('currentTemp').innerText = `${Math.round(data.current_weather.temperature)}°সে.`;
+                        })
+                        .catch(() => { document.getElementById('currentTemp').innerText = "অনুপলব্ধ"; });
+                }, () => {
+                    // লোকেশন পারমিশন না থাকলে ডিফল্ট হিসেবে ঢাকা এর তাপমাত্রা (ঐচ্ছিক)
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current_weather=true`)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('currentTemp').innerText = `${Math.round(data.current_weather.temperature)}°সে.`;
+                    });
+                });
+            }
+        }
 
         function syncWithFirebase() {
             db.ref('donors').on('value', (snapshot) => {
@@ -289,25 +374,36 @@
                 donorData = data ? Object.values(data) : [];
                 filterDonors();
                 updateStatsDisplay();
+                checkDeepLink();
             });
         }
 
-        function toggleFavorite(id) {
-            const index = favorites.indexOf(id.toString());
-            if (index > -1) favorites.splice(index, 1);
-            else favorites.push(id.toString());
-            localStorage.setItem('favDonors', JSON.stringify(favorites));
-            filterDonors();
+        function updateLiveInfo() {
+            const now = new Date();
+            const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+            const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+            
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            seconds = seconds < 10 ? '0'+seconds : seconds;
+            
+            document.getElementById('currentTime').innerText = `${hours}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('currentDate').innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
         }
 
+        setInterval(updateLiveInfo, 1000);
+        updateLiveInfo();
+        getRealWeather();
+
+        // লগইন ও অন্যান্য ফাংশন আগের মতই কাজ করবে...
         function toggleAuthVisibility() {
             const authCard = document.getElementById('auth-card');
+            authCard.classList.toggle('show-card');
             if(authCard.classList.contains('show-card')) {
-                authCard.style.opacity = "0";
-                setTimeout(() => { authCard.classList.remove('show-card'); }, 400);
-            } else {
-                authCard.classList.add('show-card');
-                setTimeout(() => { authCard.style.opacity = "1"; }, 10);
                 authCard.scrollIntoView({ behavior: 'smooth' });
                 toggleAuth();
             }
@@ -320,14 +416,23 @@
 
             if (loggedInUser) {
                 document.getElementById('profileSection').classList.remove('hidden-section');
-                document.getElementById('editName').value = loggedInUser.name;
-                document.getElementById('editGroup').value = loggedInUser.group;
-                document.getElementById('editLoc').value = loggedInUser.loc;
+                document.getElementById('navAuthBtn').innerText = "প্রোফাইল";
+                fillProfile();
             } else if (type === 'register') {
                 document.getElementById('registerSection').classList.remove('hidden-section');
+                document.getElementById('navAuthBtn').innerText = "লগইন";
             } else {
                 document.getElementById('loginSection').classList.remove('hidden-section');
+                document.getElementById('navAuthBtn').innerText = "লগইন";
             }
+        }
+
+        function fillProfile() {
+            if(!loggedInUser) return;
+            document.getElementById('editName').value = loggedInUser.name;
+            document.getElementById('editGroup').value = loggedInUser.group;
+            document.getElementById('editPhone').value = loggedInUser.phone;
+            document.getElementById('editLoc').value = loggedInUser.loc;
         }
 
         function saveProfile() {
@@ -338,64 +443,150 @@
             };
             db.ref('donors/' + loggedInUser.id).update(updated).then(() => {
                 loggedInUser = {...loggedInUser, ...updated};
-                sessionStorage.setItem('lifeLineBDUser', JSON.stringify(loggedInUser));
-                alert('সেভ হয়েছে!');
+                sessionStorage.setItem('lifeLineUser', JSON.stringify(loggedInUser));
+                alert('প্রোফাইল সফলভাবে আপডেট হয়েছে!');
                 toggleAuthVisibility();
             });
         }
 
-        function logout() { sessionStorage.removeItem('lifeLineBDUser'); location.reload(); }
+        function deleteAccount() {
+            if (confirm("আপনি কি নিশ্চিত যে আপনার অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা সম্ভব হবে না।")) {
+                db.ref('donors/' + loggedInUser.id).remove().then(() => {
+                    alert("আপনার অ্যাকাউন্টটি সফলভাবে মুছে ফেলা হয়েছে।");
+                    logout();
+                }).catch(() => {
+                    alert("অ্যাকাউন্ট মুছতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+                });
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('lifeLineUser');
+            loggedInUser = null;
+            document.getElementById('navAuthBtn').innerText = "লগইন";
+            toggleAuth('login');
+            toggleAuthVisibility();
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('statDonors').innerText = donorData.length;
+            const uniqueDistricts = new Set();
+            donorData.forEach(donor => {
+                if(donor.loc) {
+                    const parts = donor.loc.split(',');
+                    const districtName = parts[parts.length - 1].trim().toLowerCase();
+                    if(districtName) uniqueDistricts.add(districtName);
+                }
+            });
+            document.getElementById('statDistricts').innerText = uniqueDistricts.size;
+        }
 
         function renderList(list) {
-            const container = document.getElementById('donorContainer');
-            container.innerHTML = '';
-            if (list.length === 0) { document.getElementById('noResult').classList.remove('hidden'); return; }
-            document.getElementById('noResult').classList.add('hidden');
-            
+            donorContainer.innerHTML = '';
+            if (list.length === 0) {
+                noResult.classList.remove('hidden');
+                return;
+            }
+            noResult.classList.add('hidden');
             const sortedList = [...list].sort((a, b) => {
-                const aFav = favorites.includes(a.id.toString()) ? 1 : 0;
-                const bFav = favorites.includes(b.id.toString()) ? 1 : 0;
-                return bFav - aFav;
+                const aSaved = savedDonors.includes(a.id.toString()) ? 1 : 0;
+                const bSaved = savedDonors.includes(b.id.toString()) ? 1 : 0;
+                return bSaved - aSaved; 
             });
 
-            sortedList.forEach(item => {
-                const isFav = favorites.includes(item.id.toString());
-                container.innerHTML += `
-                    <div class="donor-card">
-                        <div class="card-drop-bg"></div>
-                        <div class="relative z-10">
-                            <div class="flex items-center justify-between mb-8">
-                                <div class="flex items-center space-x-4">
-                                    <div class="blood-group-badge">${item.group}</div>
-                                    <div>
-                                        <h3 class="donor-name text-xl font-bold text-gray-800 transition-colors duration-300">${item.name}</h3>
-                                        <p class="text-gray-400 text-sm"><i class="fas fa-location-dot text-red-500 mr-1"></i> ${item.loc}</p>
-                                    </div>
-                                </div>
-                                <i onclick="toggleFavorite('${item.id}')" class="${isFav ? 'fas' : 'far'} fa-heart fav-icon text-xl ${isFav ? 'text-red-500' : 'text-gray-300'}"></i>
+            sortedList.forEach((item) => {
+                const isSaved = savedDonors.includes(item.id.toString());
+                donorContainer.innerHTML += `
+                    <div id="donor-${item.id}" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-red-50 donor-card relative overflow-hidden group">
+                        <div class="absolute right-8 top-8 z-20 flex flex-col items-center gap-3">
+                            <button onclick="toggleSave('${item.id}')" class="bookmark-btn">
+                                <i class="${isSaved ? 'fas fa-heart is-saved' : 'far fa-heart'}"></i>
+                            </button>
+                            <button onclick="copyModernLink('${item.id}')" class="card-share-btn" title="শেয়ার করুন">
+                                <i class="fas fa-share-nodes"></i>
+                            </button>
+                        </div>
+                        <div class="absolute -right-10 -bottom-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                            <i class="fas fa-droplet text-[12rem]"></i>
+                        </div>
+                        <div class="flex items-center space-x-4 mb-6 relative z-10">
+                            <div class="w-14 h-14 bg-gradient-to-br from-red-500 to-red-800 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-lg">
+                                ${item.group}
                             </div>
-                            <div class="flex items-center space-x-3">
-                                <a href="tel:${item.phone}" class="call-btn">কল করুন</a>
-                                <a href="https://wa.me/${item.phone}" target="_blank" class="whatsapp-btn">
-                                    <i class="fab fa-whatsapp text-2xl"></i>
-                                </a>
+                            <div class="pr-6">
+                                <h3 class="text-xl font-extrabold text-gray-800">${item.name}</h3>
+                                <p class="text-gray-400 text-sm font-medium flex items-center">
+                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i> ${item.loc}
+                                </p>
                             </div>
+                        </div>
+                        <div class="flex gap-3 relative z-10">
+                            <a href="tel:${item.phone}" class="flex-[2] bg-gray-900 text-white text-center py-4 rounded-2xl font-bold hover:bg-red-600 transition-all flex items-center justify-center gap-2">কল করুন</a>
+                            <a href="https://wa.me/${item.phone}" target="_blank" class="flex-1 bg-green-50 text-green-600 flex items-center justify-center rounded-2xl hover:bg-green-600 hover:text-white transition-all border border-green-100"><i class="fab fa-whatsapp text-2xl"></i></a>
                         </div>
                     </div>`;
             });
         }
 
+        function toggleSave(id) {
+            const index = savedDonors.indexOf(id.toString());
+            if (index === -1) savedDonors.push(id.toString());
+            else savedDonors.splice(index, 1);
+            localStorage.setItem('savedLifeLineDonors', JSON.stringify(savedDonors));
+            filterDonors();
+        }
+
         function filterDonors() {
-            const locQ = document.getElementById('locSearch').value.toLowerCase();
-            const grpQ = document.getElementById('groupFilter').value.replace('🩸 ', '');
-            const filtered = donorData.filter(d => d.loc.toLowerCase().includes(locQ) && (grpQ === "" || d.group === grpQ));
+            const locQuery = document.getElementById('locSearch').value.toLowerCase();
+            const groupQuery = document.getElementById('groupFilter').value;
+            const filtered = donorData.filter(d => {
+                const matchLoc = d.loc.toLowerCase().includes(locQuery);
+                const matchGroup = groupQuery === "" || d.group === groupQuery;
+                return matchLoc && matchGroup;
+            });
             renderList(filtered);
         }
 
-        function updateStatsDisplay() {
-            document.getElementById('statDonors').innerText = donorData.length;
-            document.getElementById('statDistricts').innerText = [...new Set(donorData.map(d => d.loc))].length;
+        function copyModernLink(id) {
+            let domain = window.location.origin + window.location.pathname;
+            domain = domain.replace('index.html', ''); 
+            if (!domain.endsWith('/')) domain += '/';
+            const shareUrl = `${domain}Donor${id}`;
+            const el = document.createElement('textarea');
+            el.value = shareUrl;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const toast = document.getElementById("shareToast");
+            toast.innerHTML = `<i class="fas fa-check-circle text-green-400 mr-2"></i> লিংক কপি হয়েছে!<br><span class="text-[10px] text-gray-400">${shareUrl}</span>`;
+            toast.className = "show";
+            setTimeout(() => { toast.className = ""; }, 3000);
         }
+
+        function checkDeepLink() {
+            const url = window.location.href;
+            if (url.includes('Donor')) {
+                const donorId = url.split('Donor')[1].split(/[?#]/)[0];
+                setTimeout(() => {
+                    const card = document.getElementById(`donor-${donorId}`);
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.classList.add('card-highlight');
+                        setTimeout(() => card.classList.remove('card-highlight'), 5000);
+                    }
+                }, 800);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            if (window.location.href.toLowerCase().includes('registration')) {
+                const authCard = document.getElementById('auth-card');
+                authCard.classList.add('show-card');
+                toggleAuth('register');
+                setTimeout(() => authCard.scrollIntoView({ behavior: 'smooth' }), 500);
+            }
+        });
 
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -404,17 +595,22 @@
             const user = donorData.find(d => d.phone === phone && d.pass === pass);
             if(user) {
                 loggedInUser = user;
-                sessionStorage.setItem('lifeLineBDUser', JSON.stringify(user));
+                sessionStorage.setItem('lifeLineUser', JSON.stringify(user));
+                alert('LifeLine BD-তে সফলভাবে লগইন হয়েছে!');
+                toggleAuth();
                 toggleAuthVisibility();
-            } else alert('ভুল তথ্য!');
+            } else alert('ভুল মোবাইল নম্বর অথবা পাসওয়ার্ড!');
         });
 
         document.getElementById('proForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const phone = document.getElementById('userPhone').value;
-            if(donorData.some(d => d.phone === phone)) return alert('ইতিমধ্যে নিবন্ধিত!');
+            if(donorData.some(d => d.phone === phone)) {
+                alert('এই মোবাইল নম্বরটি ইতিমধ্যে নিবন্ধিত!');
+                return;
+            }
             const newDonor = {
-                id: Date.now(),
+                id: Date.now().toString(),
                 name: document.getElementById('userName').value,
                 group: document.getElementById('userGroup').value,
                 loc: document.getElementById('userLoc').value,
@@ -422,26 +618,13 @@
                 pass: document.getElementById('userPass').value
             };
             db.ref('donors/' + newDonor.id).set(newDonor).then(() => {
-                alert('সফল হয়েছে!');
+                alert('LifeLine BD-তে রেজিস্ট্রেশন সফল হয়েছে!');
                 toggleAuth('login');
+                e.target.reset();
             });
         });
 
-        function updateLiveTime() {
-            const now = new Date();
-            const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
-            
-            const timeStr = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString('bn-BD');
-            const dayName = days[now.getDay()];
-
-            document.getElementById('currentTime').innerText = timeStr;
-            document.getElementById('fullDate').innerText = dayName + ', ' + dateStr;
-        }
-
-        setInterval(updateLiveTime, 1000);
         syncWithFirebase();
-        updateLiveTime();
     </script>
 </body>
-</html>
+    </html>
