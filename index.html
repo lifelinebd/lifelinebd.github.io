@@ -9,7 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Noto Sans Bengali', sans-serif; background: #fdfcfc; scroll-behavior: smooth; }
+        body { 
+            font-family: 'Noto Sans Bengali', sans-serif; 
+            background: #fdfcfc; 
+            scroll-behavior: smooth; 
+            /* লেখা সিলেক্ট করা বন্ধ করার জন্য সিএসএস */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         .hero-gradient { background: radial-gradient(circle at top right, #ff4d4d, #881337); }
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .donor-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(225, 29, 72, 0.1); position: relative; }
@@ -21,14 +30,18 @@
         .input-focus { transition: all 0.3s ease; border: 1px solid transparent; }
         .input-focus:focus { border-color: #e11d48; background: white; box-shadow: 0 0 15px rgba(225, 29, 72, 0.08); }
         
+        /* ইনপুট বক্সে যাতে টাইপ করা যায় সেজন্য আলাদা রুল */
+        input, textarea, select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
         .bookmark-btn { transition: all 0.3s ease; cursor: pointer; border: none; background: none; margin: 0; padding: 0; line-height: 1; }
         .bookmark-btn i { font-size: 1.4rem; color: #d1d5db; transition: all 0.3s ease; }
         .bookmark-btn:hover i { transform: scale(1.2); }
         .is-saved { color: #e11d48 !important; filter: drop-shadow(0 0 5px rgba(225, 29, 72, 0.4)); }
-        
-        .card-share-btn { color: #cbd5e1; transition: all 0.3s ease; cursor: pointer; border: none; background: none; margin: 0; padding: 0; line-height: 1; text-align: center; width: 1.4rem;}
-        .card-share-btn:hover { color: #e11d48; transform: scale(1.2); }
-        .card-share-btn i { font-size: 1.1rem; }
 
         .floating { animation: floating 3s ease-in-out infinite; }
         @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -45,16 +58,13 @@
         .info-pill { font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
         .info-dot { width: 4px; height: 4px; background: #cbd5e1; border-radius: 50%; }
 
-        .reg-share-btn { position: absolute; right: 25px; top: 25px; color: #cbd5e1; cursor: pointer; transition: all 0.3s ease; z-index: 40; border:none; background:none; }
-        .reg-share-btn:hover { color: #e11d48; transform: scale(1.2); }
-
         #shareToast { visibility: hidden; min-width: 280px; background-color: #111827; color: #fff; text-align: center; border-radius: 15px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         #shareToast.show { visibility: visible; animation: fadeInUp 0.5s, fadeOutDown 0.5s 2.5s; }
         @keyframes fadeInUp { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
         @keyframes fadeOutDown { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
-<body class="text-gray-900">
+<body class="text-gray-900" oncontextmenu="return false" onkeydown="if ((event.ctrlKey && event.keyCode == 67) || (event.ctrlKey && event.keyCode == 85)) return false;">
 
     <div id="shareToast"></div>
 
@@ -166,10 +176,6 @@
                 </div>
 
                 <div id="registerSection" class="hidden-section">
-                    <button onclick="copyModernLink('Registration')" class="reg-share-btn" title="রেজিস্ট্রেশন লিংক কপি করুন">
-                        <i class="fas fa-share-nodes text-lg"></i>
-                    </button>
-
                     <div class="flex items-center gap-4 mb-8 relative z-10">
                         <div class="w-12 h-12 bg-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg rotate-3 group-hover:rotate-0 transition-all">
                             <i class="fas fa-heart-circle-plus text-xl"></i>
@@ -345,7 +351,6 @@
         const donorContainer = document.getElementById('donorContainer');
         const noResult = document.getElementById('noResult');
 
-        // তাপমাত্রা ফেচ করার ফাংশন (উন্নত লজিক)
         function getRealWeather() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
@@ -358,7 +363,6 @@
                         })
                         .catch(() => { document.getElementById('currentTemp').innerText = "অনুপলব্ধ"; });
                 }, () => {
-                    // লোকেশন পারমিশন না থাকলে ডিফল্ট হিসেবে ঢাকা এর তাপমাত্রা (ঐচ্ছিক)
                     fetch(`https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current_weather=true`)
                     .then(res => res.json())
                     .then(data => {
@@ -399,7 +403,6 @@
         updateLiveInfo();
         getRealWeather();
 
-        // লগইন ও অন্যান্য ফাংশন আগের মতই কাজ করবে...
         function toggleAuthVisibility() {
             const authCard = document.getElementById('auth-card');
             authCard.classList.toggle('show-card');
@@ -502,9 +505,6 @@
                             <button onclick="toggleSave('${item.id}')" class="bookmark-btn">
                                 <i class="${isSaved ? 'fas fa-heart is-saved' : 'far fa-heart'}"></i>
                             </button>
-                            <button onclick="copyModernLink('${item.id}')" class="card-share-btn" title="শেয়ার করুন">
-                                <i class="fas fa-share-nodes"></i>
-                            </button>
                         </div>
                         <div class="absolute -right-10 -bottom-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                             <i class="fas fa-droplet text-[12rem]"></i>
@@ -545,23 +545,6 @@
                 return matchLoc && matchGroup;
             });
             renderList(filtered);
-        }
-
-        function copyModernLink(id) {
-            let domain = window.location.origin + window.location.pathname;
-            domain = domain.replace('index.html', ''); 
-            if (!domain.endsWith('/')) domain += '/';
-            const shareUrl = `${domain}Donor${id}`;
-            const el = document.createElement('textarea');
-            el.value = shareUrl;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            const toast = document.getElementById("shareToast");
-            toast.innerHTML = `<i class="fas fa-check-circle text-green-400 mr-2"></i> লিংক কপি হয়েছে!<br><span class="text-[10px] text-gray-400">${shareUrl}</span>`;
-            toast.className = "show";
-            setTimeout(() => { toast.className = ""; }, 3000);
         }
 
         function checkDeepLink() {
