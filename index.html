@@ -383,7 +383,7 @@
         function syncWithFirebase() {
             db.ref('donors').on('value', (snapshot) => {
                 const data = snapshot.val();
-                donorData = data ? Object.values(data).sort((a, b) => b.id - a.id) : [];
+                donorData = data ? Object.values(data) : [];
                 filterDonors();
                 updateStatsDisplay();
                 checkDeepLink();
@@ -500,10 +500,20 @@
             }
             noResult.classList.add('hidden');
             
+            // অ্যাডমিন অ্যাপের 'order' অনুযায়ী সাজানোর লজিক
             const sortedList = [...list].sort((a, b) => {
+                // ১. বুকমার্ক করা ডোনারদের উপরে রাখা
                 const aSaved = savedDonors.includes(a.id.toString()) ? 1 : 0;
                 const bSaved = savedDonors.includes(b.id.toString()) ? 1 : 0;
                 if (aSaved !== bSaved) return bSaved - aSaved;
+
+                // ২. অ্যাডমিন প্যানেলের 'order' নম্বর অনুযায়ী সাজানো
+                const orderA = a.order !== undefined ? a.order : 9999;
+                const orderB = b.order !== undefined ? b.order : 9999;
+                
+                if (orderA !== orderB) return orderA - orderB;
+
+                // ৩. যদি অর্ডার সমান হয় তবে আইডি অনুযায়ী সাজানো
                 return b.id - a.id; 
             });
 
@@ -608,7 +618,8 @@
                 group: document.getElementById('userGroup').value,
                 loc: document.getElementById('userLoc').value,
                 phone: phone,
-                pass: document.getElementById('userPass').value
+                pass: document.getElementById('userPass').value,
+                order: 9999 // ডিফল্ট অর্ডার
             };
             db.ref('donors/' + newDonor.id).set(newDonor).then(() => {
                 alert('LifeLine BD-তে রেজিস্ট্রেশন সফল হয়েছে!');
@@ -620,4 +631,4 @@
         syncWithFirebase();
     </script>
 </body>
-            </html>
+</html>
